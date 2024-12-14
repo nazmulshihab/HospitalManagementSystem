@@ -55,13 +55,38 @@
                 <input type="email" name="email" placeholder="Enter your email" required>
 
                 <label for="password">Password:</label>
-                <input type="password" name="password" placeholder="Enter your password" required>
+                <input type="password" name="password" id="password" placeholder="Enter your password" required>
 
                 <label for="confirm-password">Confirm Password:</label>
-                <input type="password" name="confirmPassword" placeholder="Confirm your password" required>
+                <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm your password" required>
+                <span id="message" class="message"></span>
                 <button id="sign-up" type="submit">Sign Up</button>
             </form>
         </div>
     </section>
 </body>
+<script>
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const message = document.getElementById('message');
+
+    confirmPasswordInput.addEventListener('input', () => {
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (confirmPassword === "") {
+        message.textContent = ""; // Clear the message when no input
+      } else if (password === confirmPassword) {
+        message.style.color = "green";
+        message.textContent = "Passwords match!";
+        message.classList.remove('error');
+        message.classList.add('success');
+      } else {
+        message.style.color = "red";
+        message.textContent = "Passwords do not match!";
+        message.classList.remove('success');
+        message.classList.add('error');
+      }
+    });
+</script>
 </html>

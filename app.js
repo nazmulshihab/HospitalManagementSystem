@@ -787,9 +787,11 @@ app.get('/invalid',(req,res)=>{
 app.post('/register', async (req, res) => {
     const { name, birthyear, gender, email, password, confirmPassword } = req.body;
 
-    // Password match check
     if (password !== confirmPassword) {
-        return res.status(400).json({ message: 'Password does not match' });
+        //return res.status(400).json({ message: 'Password does not match' });
+        setTimeout(() => {
+            res.sendFile(path.join(__dirname, '/public/HTML/', 'confirmPass.html'));
+        }, 200);
     }
 
     try {
