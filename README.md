@@ -12,6 +12,13 @@ with HTML for templating, and CSS for styling.
 - **Appointment Scheduling**: Schedule, view, and manage doctor appointments.
 - **Admin Dashboard**: Admin can manage patients, appointments, and doctors.
 
+## Database Setup
+1. Place the `schema.sql` and file in the appropriate directory.
+2. Open your SQL client (e.g., MySQL Workbench).
+3. Connect to your database instance.
+4. Run `schema.sql` to create the necessary tables.
+5. Populate the tables with sample data.
+
 ## Installation
 Follow the steps below to set up the Hospital Management System locally:
 
