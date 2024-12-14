@@ -137,12 +137,12 @@
                     </tbody>
                 </table>
             </div>
-            <div class="patients-table"style="display: none;margin-top: 45px;">Patient</div>
-            <div class="doctors-table"style="display: none;margin-top: 45px;">Doctor</div>
-            <div class="doctorsToday-table"style="display: none;margin-top: 45px;">d today</div>
-            <div class="apToday-table"style="display: none;margin-top: 45px;">ap today</div>
-            <div class="schedules-table"style="display: none;margin-top: 45px;">schedules</div>
-            <div class="history-table"style="display: none;margin-top: 45px;">history</div>
+            <div class="patients-table"style="display: none;">Patient</div>
+            <div class="doctors-table"style="display: none;">Doctor</div>
+            <div class="doctorsToday-table"style="display: none;">d today</div>
+            <div class="apToday-table"style="display: none;">ap today</div>
+            <div class="schedules-table"style="display: none;">schedules</div>
+            <div class="history-table"style="display: none;">history</div>
         </div>
     </div>
 </body>
@@ -202,7 +202,7 @@ function fetchAdminStats() {
 document.addEventListener('DOMContentLoaded', () => {
     fetchAdminStats();  // Initial load
     
-    setInterval(fetchAdminStats, 120000);  // Refresh every 2 minutes
+    setInterval(fetchAdminStats, 120000); 
 });
 
 

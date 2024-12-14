@@ -10,8 +10,6 @@
 header {
     display: flex;
     height: 10vh;
-    width: 99.5vw;
-    position: fixed;
     justify-content: space-between;
     align-items: center;
     padding-top: 18px;
@@ -688,11 +686,8 @@ th, td {
 }
 
 thead th {
-    position: sticky;
     background-color: #007bff;
     color: white;
-    top: 110px;
-    z-index: 10;
 }
 
 tbody tr:nth-child(even) {
@@ -745,13 +740,9 @@ th {
     display: flex;
     flex-direction: column;
     padding: 5px;
-    margin-left: 300px;
-    margin-top: 60px;
 }
 
 .dash-header {
-    position: fixed;
-    width: 1058px;
     background-color: #abff03;
     padding: 8px;
     display: flex;
@@ -890,9 +881,7 @@ th {
 
 /* Sidebar Styles */
 .dash-sidebar {
-    position: fixed;
     height: 100vh;
-    margin-top: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1009,7 +998,6 @@ th {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 20px;
-    margin-top: 50px;
 }
 
 .stat-box {
