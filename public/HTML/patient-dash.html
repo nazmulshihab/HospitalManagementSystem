@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="left-sec">
+            <a href="/"><img id="Hospital-logo" src="../images/Hospital_logo_2.svg" alt="Central Hospital Logo"></a>
+            <a href="/"><h3>Central Hospital</h3></a>
+        </div>
+        
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li class="service-dropdown">
+                    <a href="#">Services</a>
+                    <ul class="service-dropdown-menu">
+                        <li><a href="/test/catalog">Test Catalog</a></li>
+                    </ul>
+                </li>
+                <li><a href="appointment" target="_blank">Request Appointment</a></li>
+                <li>
+                    <div class="profile-menu">
+                        <img src="" alt="Profile" class="profile-icon" onclick="toggleDropdown()">
+                        <div class="p-dropdown">
+                            <a href="/patient-dashboard">Dashboard</a>
+                            <a href="/logout" onclick="logout()">Log Out</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="dashboard-container">
+        <div class="dash-sidebar">
+            <div class="profile">
+                <img id="profile-img" src="../images/profile-img.webp" alt="profile">
+                <h4>Shihab Shahriar</h4>
+                <h5>nazmulhoquecsecu@gmail.com</h5>
+                <button id="logout-btn"><a href="/logout" onclick="logout()">Log Out</a></button>
+            </div>
+            <ul>
+            <div class="p-list-items">
+                <li id="myAppointments" onclick="viewAppointments()">My Appointments</li>
+                <li id="diagnosis" onclick="viewDH()">Diagnoses History</li>
+            </div>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="dash-header">
+                <h1>Dashboard</h1>    
+            </div>
+            <div class="content">
+                <!-- Dynamic Data -->
+            </div>
+            <div class="diag-history" style="display: none;"></div>
+            <div class="patient-appointments">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">Doctor Name</th>
+                            <th style="text-align: center;color: black;">Appointment Date</th>
+                            <th style="text-align: center;color: black;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;color: black;">John Doe</td>
+                            <td style="text-align: center;color: black;">2024-12-05</td>
+                            <td style="text-align: center;">
+                                <button id="status" type="button" style="background-color: yellow;">Pending</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    fetch('/check-session', { method: 'GET', credentials: 'same-origin' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.user) {
+            document.querySelector('.profile-menu').style.display = 'block';
+            document.querySelector('.profile-icon').src = data.user.profilePic;
+            //document.querySelector('h2').innerText = data.user.username.toUpperCase();
+            document.querySelector("#profile-img").src = data.user.profilePic;
+            document.querySelector('h4').innerText = data.user.username;
+            document.querySelector('h5').innerText = data.user.email;
+
+            // Fetch appointments to populate Upcoming Appointments
+            fetch('/my-appointments', { method: 'GET', credentials: 'same-origin' })
+                .then(response => response.json())
+                .then(appointmentsData => {
+                    if (appointmentsData.myAppointments && appointmentsData.myAppointments.length > 0) {
+                        let currentDate = new Date(); // Get the current date
+
+                        let upcomingAppointments = appointmentsData.myAppointments.filter(appointment => {
+                            let appointmentDate = new Date(appointment.A_date);
+                            return appointment.Status === 'Approved' && appointmentDate >= currentDate;
+                        });
+
+                        // Update Upcoming Schedules in `.content` section
+                        if (upcomingAppointments.length > 0) {
+                            let upcomingHTML = `<h2>Upcoming Appointment</h2><table>
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; color: black;">Doctor Name</th>
+                                        <th style="text-align: center; color: black;">Appointment Date</th>
+                                        <th style="text-align: center; color: black;">Appointment Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+                            upcomingAppointments.forEach(appointment => {
+                                upcomingHTML += `<tr>
+                                    <td style="text-align: center; color: black;">${appointment.User_name}</td>
+                                    <td style="text-align: center; color: black;">${new Date(appointment.A_date).toLocaleDateString()}</td>
+                                    <td style="text-align: center; color: black;">${appointment.A_time}</td>
+                                </tr>`;
+                            });
+                            upcomingHTML += `</tbody></table>`;
+                            document.querySelector('.content').innerHTML = upcomingHTML;
+                        } else {
+                            document.querySelector('.content').innerHTML = '<p>No upcoming schedules.</p>';
+                        }
+                    } else {
+                        document.querySelector('.content').innerHTML = '<p>No upcoming schedules.</p>';
+                    }
+                })
+                .catch(error => console.error('Error fetching appointments:', error));
+        } else {
+            window.location.href = '/login';
+        }
+    })
+    .catch(error => console.error('Error checking session:', error));
+
+function logout() {
+    fetch('/logout', {
+        method: 'POST',
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = '/'; 
+        } else {
+            console.log('Logout failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error during logout:', error);
+    });
+}
+
+function toggleDropdown() {
+    var dropdown = document.querySelector(".p-dropdown");
+  
+  // Toggling
+  if (dropdown.style.display === "flex") {
+    dropdown.style.display = "none";
+  } else {
+    dropdown.style.display = "flex";
+  }
+
+}
+
+document.getElementById('myAppointments').addEventListener('click',()=>{
+    fetch('/my-appointments', { method: 'GET', credentials: 'same-origin' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.myAppointments && data.myAppointments.length > 0) { 
+            let myAp = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">Serial No.</th>
+                            <th style="text-align: center; color: black;">Doctor Name</th>
+                            <th style="text-align: center;color: black;">Appointment Date<br>(MM-DD-YYYY)</th>
+                            <th style="text-align: center;color: black;">Appointment Time</th>
+                            <th style="text-align: center;color: black;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                data.myAppointments.forEach(appointment => {
+                    myAp += `<tr>
+                            <td style="text-align: center;color: black;">${appointment.SerialNO}</td>
+                            <td style="text-align: center;color: black;">${appointment.User_name}</td>
+                            <td style="text-align: center;color: black;">${new Date(appointment.A_date).toLocaleDateString()}</td>
+                            <td style="text-align: center;color: black;">${appointment.A_time}</td>
+                            <td style="text-align: center;">
+                                <button class="status-btn" id="status" type="button" >${appointment.Status}</button>
+                            </td>
+                        </tr>`;
+                });
+                myAp += `</tbody></table>`;
+                document.querySelector('.patient-appointments').innerHTML = myAp;
+
+                // data.myAppointments.forEach((appointment,index) => {
+                //     let statusBtn = document.querySelectorAll('button')[index];
+                //     if (statusBtn.innerText === 'Pending') {
+                //         statusBtn.style.backgroundColor = 'yellow';
+                //     } else if (statusBtn.innerText === 'Approved') {
+                //         statusBtn.style.backgroundColor = '#2aff04';
+                //     } else if (statusBtn.innerText === 'Rejected') {
+                //         statusBtn.style.backgroundColor = 'red';
+                //     }
+                // })
+
+                document.querySelectorAll('.status-btn').forEach(button => {
+    const status = button.innerText.trim(); // Get the button's status text
+    console.log(status);
+    if (status === 'Pending') {
+        button.style.backgroundColor = 'yellow';
+        return;
+    } else if (status === 'Approved') {
+        button.style.backgroundColor = '#2aff04';
+        return;
+    } else if (status === 'Rejected') {
+        button.style.backgroundColor = 'red';
+        return;
+    }
+});
+
+        } else {
+            document.querySelector('.patient-appointments').innerHTML = '<p>No Appointments</p>';
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+document.getElementById('diagnosis').addEventListener('click',()=>{
+    fetch('/diagnosis/history', { method: 'GET', credentials: 'same-origin' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.diagnosis && data.diagnosis.length > 0) { 
+            let diag = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">DiagnosisID</th>
+                            <th style="text-align: center;color: black;">Test Name</th>
+                            <th style="text-align: center;color: black;">Diagnosis Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                data.diagnosis.forEach(record => {
+                    const diag_date = new Date(record.Diagnosis_Date);
+                    const formattedDate = diag_date.toLocaleDateString('en-GB');
+                    const insertDate = formattedDate.split('T')[0];
+                    diag += `<tr>
+                            <td style="text-align: center;color: black;">${record.DiagnosisID}</td>
+                            <td style="text-align: center;color: black;">${record.Test_name}</td>
+                            <td style="text-align: center;">${insertDate}</td>
+                        </tr>`;
+                });
+                diag += `</tbody></table>`;
+                document.querySelector('.diag-history').innerHTML = diag;
+
+        } else {
+            document.querySelector('.diag-history').innerHTML = '<p>No Diagnosis History</p>';
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+function viewAppointments(){
+    let myAppointments = document.querySelector('.patient-appointments');
+    let bodyContent = document.querySelector('.content');
+    let dh = document.querySelector('.diag-history');
+
+    if (!myAppointments.style.display || myAppointments.style.display === "none") {
+        document.querySelector('h1').innerText = "My Appointments";
+        bodyContent.style.display = "none";
+        dh.style.display = "none";
+        myAppointments.style.display = "flex";
+    } else {
+        // Otherwise, hide it
+        document.querySelector('h1').innerText = "Dashboard";
+        bodyContent.style.display = "inline-block";
+        myAppointments.style.display = "none";
+        dh.style.display = "none";
+    }
+}
+
+function viewDH(){
+    let myAppointments = document.querySelector('.patient-appointments');
+    let bodyContent = document.querySelector('.content');
+    let dh = document.querySelector('.diag-history');
+
+    if (!dh.style.display || dh.style.display === "none") {
+        document.querySelector('h1').innerText = "Diagnoses History";
+        dh.style.display = "flex";
+        bodyContent.style.display = "none";
+        myAppointments.style.display = "none";
+    } else {
+        // Otherwise, hide it
+        document.querySelector('h1').innerText = "Dashboard";
+        bodyContent.style.display = "inline-block";
+        myAppointments.style.display = "none";
+        dh.style.display = "none";
+    }
+}
+</script>
+</html>

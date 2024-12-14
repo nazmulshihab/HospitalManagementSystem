@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="left-sec">
+            <a href="/"><img id="Hospital-logo" src="../images/Hospital_logo_2.svg" alt="Central Hospital Logo"></a>
+            <a href="/"><h3>Central Hospital</h3></a>
+        </div>
+        
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li class="service-dropdown">
+                    <a href="#">Services</a>
+                    <ul class="service-dropdown-menu">
+                        <li><a href="/test/catalog">Test Catalog</a></li>
+                    </ul>
+                </li>
+                <li><a href="/doctor-dashboard">Dashboard</a></li>
+                <li>
+                    <div class="profile-menu">
+                        <img src="" alt="Profile" class="profile-icon" onclick="toggleDropdown()">
+                        <div class="p-dropdown">
+                            <a href="/doctor-dashboard">Dashboard</a>
+                            <a href="/logout" onclick="logout()">Log Out</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="dashboard-container">
+        <div class="dash-sidebar">
+             <!-- <h2>Dashboard</h2> -->
+            <div class="profile">
+                <img id="profile-img" src="../images/profile-img.webp" alt="profile">
+                <h4>Shihab Shahriar</h4>
+                <h5>nazmulhoquecsecu@gmail.com</h5>
+                <button id="logout-btn"><a href="/logout" onclick="logout()">Log Out</a></button>
+            </div>
+            <ul>
+                <div class="d-list-items">
+                <li id="approval-section" onclick="approvalSection()">Approve Appointments</li>
+                <li id="todayAp" onclick="todayApSection()">Today's Appointments</li>
+                <li id="history" onclick="historySection()">History</li>
+                </div>
+            </ul>
+        </div>
+
+        <div class="dr-dash-main-content">
+            <div class="dr-dash-header">
+                <h1>Doctor's Dashboard</h1>
+            </div>
+            <div class="pending-appointments-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">Patient Name</th>
+                            <th style="text-align: center;color: black;">Appointment Date</th>
+                            <th style="text-align: center; color: black;">Select Time</th>
+                            <th style="text-align: center;color: black;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;color: black;">John Doe</td>
+                            <td style="text-align: center;color: black;">2024-12-05</td>
+                            <td style="text-align: center; color: black;">
+                                <input type="time" name="appointmentTime" class="time-selector" value="17:00" required>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="action-form">
+                                <form action="/approve-appointment" method="POST" class="action-btn">
+                                    <input type="hidden" name="appointmentId" value="1">
+                                    <button id="approve" type="submit">Approve</button>
+                                </form>
+                                <form action="/reject-appointment" method="POST" class="action-btn">
+                                    <input type="hidden" name="appointmentId" value="1">
+                                    <button id="reject" type="submit">Reject</button>
+                                </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="todayApSec"><p>No Appointments Today</p></div>
+            <div class="historySec">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">Patient Name</th>
+                            <th style="text-align: center;color: black;">Appointment Date</th>
+                            <th style="text-align: center;color: black;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;color: black;">John Doe</td>
+                            <td style="text-align: center;color: black;">2024-12-05</td>
+                            <td style="text-align: center;">
+                                <button id="status" type="button">Pending</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="dr-dash-bodycontent">
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <h3>Today's Total Appointments</h3>
+                        <p id="today-appointments">20</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Total Treated Patients (This Month)</h3>
+                        <p id="month-treated">50</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Total Treated Patients (This Year)</h3>
+                        <p id="year-treated">250</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Total Patients Treated (All Time)</h3>
+                        <p id="overall-treated">500</p>
+                    </div>
+                </div>
+            </div>
+        </div>  
+</body>
+<script>
+    fetch('/check-session', { method: 'GET', credentials: 'same-origin' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.user) {
+            // If user is logged in, show Profile button
+            document.querySelector('.profile-menu').style.display = 'block';
+            document.querySelector('.profile-icon').src = data.user.profilePic;
+            //document.querySelector('h2').innerText = data.user.username.toUpperCase();
+            document.querySelector("#profile-img").src = data.user.profilePic;
+            document.querySelector('h4').innerText = data.user.username;
+            document.querySelector('h5').innerText = data.user.email;
+        } else {
+            // Redirect to login page if not logged in
+            window.location.href = '/login';
+        }
+    })
+    .catch(error => console.error('Error checking session:', error));
+
+function logout() { 
+    fetch('/logout', {
+        method: 'POST',
+        credentials: 'same-origin'  
+    })
+    .then(response => {
+        if (response.ok) {
+            
+            window.location.href = '/';
+        } else {
+            console.log('Logout failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error during logout:', error);
+    });
+}
+
+// Fetch doctor's statistics (Today, Month, Year, Total)
+function fetchDoctorStats() {
+    fetch('/get-stat', { method: 'GET', credentials: 'same-origin' })
+        .then(response => response.json())
+        .then(data => {
+            // Handle Today's Appointments
+            if (data.ApToday !== undefined) {
+                document.getElementById('today-appointments').textContent = data.ApToday;
+            } else {
+                document.getElementById('today-appointments').textContent = '0';
+            }
+
+            // Handle Monthly Appointments
+            if (data.ApMonth !== undefined) {
+                document.getElementById('month-treated').textContent = data.ApMonth;
+            } else {
+                document.getElementById('month-treated').textContent = '0';
+            }
+
+            // Handle Yearly Appointments
+            if (data.ApYear !== undefined) {
+                document.getElementById('year-treated').textContent = data.ApYear;
+            } else {
+                document.getElementById('year-treated').textContent = '0';
+            }
+
+            // Handle Total Appointments
+            if (data.ApTotal !== undefined) {
+                document.getElementById('overall-treated').textContent = data.ApTotal;
+            } else {
+                document.getElementById('overall-treated').textContent = '0';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching doctor statistics:', error);
+        });
+}
+
+
+// Call the function when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    fetchDoctorStats();  // Initial load
+    
+    setInterval(fetchDoctorStats, 120000);  // Refresh every 2 minutes
+});
+
+
+function toggleDropdown() {
+    var dropdown = document.querySelector(".p-dropdown");
+  
+  // Toggling
+  if (dropdown.style.display === "flex") {
+    dropdown.style.display = "none";
+  } else {
+    dropdown.style.display = "flex";
+  }
+}
+
+document.querySelector("#approval-section").addEventListener('click',()=>{
+    fetch('/get-pending-appointments',{method:'GET',credentials:"same-origin"})
+    .then(response=>response.json())
+    .then(data => {
+    if(data.appointments && data.appointments.length > 0){
+
+        let approveHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; color: black;">Serial No.</th>
+                                <th style="text-align: center; color: black;">Patient Name</th>
+                                <th style="text-align: center; color: black;">Age</th>
+                                <th style="text-align: center; color: black;">Gender</th>
+                                <th style="text-align: center;color: black;">Appointment Date<br>(MM-DD-YYYY)</th>
+                                <th style="text-align: center; color: black;">Select Time</th>
+                                <th style="text-align: center;color: black;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                data.appointments.forEach(appointment => {
+                    approveHTML += `
+                        <tr>
+                            <td style="text-align: center;color: black;">${appointment.SerialNo}</td>
+                            <td style="text-align: center;color: black;">${appointment.User_name}</td>
+                            <td style="text-align: center;color: black;">${appointment.Age}</td>
+                            <td style="text-align: center;color: black;">${appointment.Gender}</td>
+                            <td style="text-align: center;color: black;">${new Date(appointment.A_date).toLocaleString()}</td>
+                            <td style="text-align: center; color: black;">
+                                <input type="time" name="appointmentTimeInput" class="time-selector" required>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="action-form">
+                                    <form action="/approve-appointment" method="POST" class="action-btn">
+                                        <input type="hidden" name="appointmentId" value="${appointment.AppointID}">
+                                        <input type="hidden" name="appointmentTime" class="selected-time">
+                                        <button id="approve" type="submit">Approve</button>
+                                    </form>
+                                    <form action="/reject-appointment" method="POST" class="action-btn">
+                                        <input type="hidden" name="appointmentId" value="${appointment.AppointID}">
+                                        <button id="reject" type="submit">Reject</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+
+                approveHTML += `</tbody></table>`;
+
+                document.querySelector('.pending-appointments-container').innerHTML = approveHTML;
+
+                document.querySelectorAll(".time-selector").forEach((timeInput, index)=> {
+                timeInput.addEventListener("change", (event) => {
+                const hiddenTimeInput = document.querySelectorAll(".selected-time")[index];
+                const selectedTime = event.target.value + ":00"; // Add seconds to HH:MM
+                hiddenTimeInput.value = selectedTime; // Update hidden input dynamically
+                });
+            });
+
+                
+            } else {
+                // Handle no appointments case
+                document.querySelector('.pending-appointments-container').innerHTML = '<p>No Pending Appointments</p>';
+            }
+})
+    .catch(error => console.error('Error fetching pending appointments:', error));
+});
+
+document.querySelector('#approve').addEventListener('click',()=>{
+    alert("Approved");
+});
+
+document.querySelector('#todayAp').addEventListener('click',()=>{
+
+fetch('/appointments-today', { method: 'GET', credentials: 'same-origin' })
+        .then(response => response.json())
+        .then(data => {
+                if (data.today && data.today.length > 0) {
+                    let currentDate = new Date(); // Get the current date
+
+                    // Filter appointments with status 'Approved' and date >= today
+                    let upcomingAppointments = data.today.filter(appointment => {
+                        let appointmentDate = new Date(appointment.A_date);
+                        return appointment.Status === 'Approved' && appointmentDate.toDateString() === currentDate.toDateString();
+                    });
+
+                    if (upcomingAppointments.length > 0) {
+                        let upcomingHTML = `<table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center; color: black;">Patient Name</th>
+                                    <th style="text-align: center; color: black;">Age</th>
+                                    <th style="text-align: center; color: black;">Gender</th>
+                                    <th style="text-align: center; color: black;">Appointment Date<br>(MM-DD-YYYY)</th>
+                                    <th style="text-align: center;color: black;">Appointment Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                        upcomingAppointments.forEach(appointment => {
+                            upcomingHTML += `<tr>
+                                <td style="text-align: center; color: black;">${appointment.User_name}</td>
+                                <td style="text-align: center; color: black;">${appointment.Age}</td>
+                                <td style="text-align: center; color: black;">${appointment.Gender}</td>
+                                <td style="text-align: center; color: black;">${new Date(appointment.A_date).toLocaleDateString()}</td>
+                                <td style="text-align: center; color: black;">${appointment.A_time}</td>
+                            </tr>`;
+                        });
+                        upcomingHTML += `</tbody></table>`;
+                        
+                        document.querySelector('.todayApSec').innerHTML = upcomingHTML;
+                    } else {
+                        document.querySelector('.todayApSec').innerHTML = '<p>No Appointments Today.</p>';
+                    }
+                } else {
+                    document.querySelector('.todayApSec').innerHTML = '<p>No upcoming schedules.</p>';
+                }
+            }) 
+            .catch(err => console.error('Error:', err));
+});
+
+document.getElementById('history').addEventListener('click',()=>{
+    fetch('/history', { method: 'GET', credentials: 'same-origin' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.history && data.history.length > 0) { 
+            let treated = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">Serial No.</th>
+                            <th style="text-align: center; color: black;">Patient Name</th>
+                            <th style="text-align: center; color: black;">Age</th>
+                            <th style="text-align: center; color: black;">Gender</th>
+                            <th style="text-align: center;color: black;">Appointment Date<br>(MM-DD-YYYY)</th>
+                            <th style="text-align: center;color: black;">Appointment Time</th>
+                            <th style="text-align: center;color: black;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                data.history.forEach(appointment => {
+                    treated += `<tr>
+                        <td style="text-align: center;color: black;">${appointment.SerialNo}</td>
+                            <td style="text-align: center;color: black;">${appointment.User_name}</td>
+                            <td style="text-align: center;color: black;">${appointment.Age}</td>
+                            <td style="text-align: center;color: black;">${appointment.Gender}</td>
+                            <td style="text-align: center;color: black;">${new Date(appointment.A_date).toLocaleDateString()}</td>
+                            <td style="text-align: center;color: black;">${(appointment.A_time)}</td>
+                            <td style="text-align: center;">
+                                <button id="status" type="button" >${appointment.Status}</button>
+                            </td>
+                        </tr>`;
+                });
+                treated += `</tbody></table>`;
+                document.querySelector('.historySec').innerHTML = treated;
+
+                data.history.forEach((appointment,index) => {
+                    let statusBtn = document.querySelectorAll('button')[index];
+                    if (statusBtn.innerText === 'Pending') {
+                        statusBtn.style.backgroundColor = 'yellow';
+                    } else if (statusBtn.innerText === 'Approved') {
+                        statusBtn.style.backgroundColor = '#2aff04';
+                    } else if (statusBtn.innerText === 'Rejected') {
+                        statusBtn.style.backgroundColor = 'red';
+                    }
+                })
+
+        } else {
+            document.querySelector('.historySec').innerHTML = '<p>Nothing to Show</p>';
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+function todayApSection() {
+    let statBodyContent = document.querySelector(".dr-dash-bodycontent");
+    let approveAppointmentSection = document.querySelector(".pending-appointments-container");
+    let todayApSec = document.querySelector(".todayApSec");
+    let historySec = document.querySelector(".historySec");
+
+    if (!todayApSec.style.display || todayApSec.style.display === "none") {
+        document.querySelector('h1').innerText = "Today's Appointments";
+        todayApSec.style.display = "flex";
+        statBodyContent.style.display = "none";
+        approveAppointmentSection.style.display = "none";
+        historySec.style.display = "none";
+    } else {
+        // Otherwise, hide it
+        document.querySelector('h1').innerText = "Dashboard";
+        statBodyContent.style.display = "inline-block";
+        todayApSec.style.display = "none";
+        approveAppointmentSection.style.display = "none";
+        historySec.style.display = "none";
+    }
+}
+
+function approvalSection() {
+    let statBodyContent = document.querySelector(".dr-dash-bodycontent");
+    let approveAppointmentSection = document.querySelector(".pending-appointments-container");
+    let todayApSec = document.querySelector(".todayApSec");
+    let historySec = document.querySelector(".historySec");
+
+    if (!approveAppointmentSection.style.display || approveAppointmentSection.style.display === "none") {
+        document.querySelector('h1').innerText = "Approve Appointments";
+        approveAppointmentSection.style.display = "flex";
+        statBodyContent.style.display = "none";
+        todayApSec.style.display = "none";
+        historySec.style.display = "none";
+    } else {
+        // Otherwise, hide it
+        document.querySelector('h1').innerText = "Dashboard";
+        statBodyContent.style.display = "inline-block";
+        approveAppointmentSection.style.display = "none";
+        todayApSec.style.display = "none";
+        historySec.style.display = "none";
+    }
+}
+
+function historySection() {
+    let statBodyContent = document.querySelector(".dr-dash-bodycontent");
+    let approveAppointmentSection = document.querySelector(".pending-appointments-container");
+    let todayApSec = document.querySelector(".todayApSec");
+    let historySec = document.querySelector(".historySec");
+
+    if (!historySec.style.display || historySec.style.display === "none") {
+        document.querySelector('h1').innerText = "History";
+        historySec.style.display = "flex";
+        statBodyContent.style.display = "none";
+        approveAppointmentSection.style.display = "none";
+        todayApSec.style.display = "none";
+    } else {
+        // Otherwise, hide it
+        document.querySelector('h1').innerText = "Dashboard";
+        statBodyContent.style.display = "inline-block";
+        todayApSec.style.display = "none";
+        approveAppointmentSection.style.display = "none";
+        historySec.style.display = "none";
+    }
+}
+
+document.querySelectorAll('.action-btn').forEach(form => {
+    form.addEventListener('submit', event => {
+        event.preventDefault(); // Prevent form submission
+        
+        const formData = new FormData(event.target);
+        fetch(event.target.action, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Appointment approved successfully!');
+            } else {
+                alert('Failed to approve appointment.');
+            }
+        })
+        .catch(err => console.error('Error:', err));
+    });
+});
+
+</script>
+</html>

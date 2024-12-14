@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="left-sec">
+            <a href="/"><img id="Hospital-logo" src="../images/Hospital_logo_2.svg" alt="Central Hospital Logo"></a>
+            <a href="/"><h3>Central Hospital</h3></a>
+        </div>
+        
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li class="service-dropdown">
+                    <a href="#">Services</a>
+                    <ul class="service-dropdown-menu">
+                        <li><a href="/test/catalog">Test Catalog</a></li>
+                    </ul>
+                </li>
+                <li><a href="appointment">Request Appointment</a></li>
+                <li>
+                    <div class="profile-menu">
+                        <img src="" alt="Profile" class="profile-icon" onclick="toggleDropdown()">
+                        <div class="p-dropdown">
+                            <a href="/admin">Dashboard</a>
+                            <a href="/logout" onclick="logout()">Log Out</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="dashboard-container">
+        <div class="dash-sidebar">
+            <div class="profile">
+                <img id="profile-img" src="../images/profile-img.webp" alt="profile">
+                <h4>Admin</h4>
+                <h5>nazmulhoquecsecu@gmail.com</h5>
+                <button id="logout-btn"><a href="/logout" onclick="logout()">Log Out</a></button>
+            </div>
+            <ul>
+            <div class="sidebar-list-items">
+                <li id="userManage" onclick="usersDropdown()">Users
+                    <div class="dropdown-li">
+                    <ul class="dropdown">
+                        <li id="users">Manage Users</li>
+                        <li id="patients">Patients</li>
+                        <li id="doctors">Doctors</li>
+                    </ul>
+                </div>
+                </li>
+                <li id="doctorsToday">Available Doctors</li>
+                <li id="appointmentsToday">Appointments Today</li>
+                <li id="schedules">Schdeules</li>
+                <li id="history">Appointments History</li>
+                <li id="stats">Statistics</li>
+            </div>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="dash-header">
+                <h1>Dashboard</h1>    
+            </div>
+            <div class="body-content">
+                <div class="stats-container" style="display: grid;">
+                    <div class="stat-box">
+                        <h3>Total Users</h3>
+                        <p id="total-users">20</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Total Patients</h3>
+                        <p id="total-patients">20</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Total Doctors</h3>
+                        <p id="total-doctors">20</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Doctors Available (Today)</h3>
+                        <p id="dr-available">20</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Total Appointments (Today)</h3>
+                        <p id="today-appointments">50</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Total Appointments (This Month)</h3>
+                        <p id="monthly-ap">250</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Total Appointments (This year)</h3>
+                        <p id="yearly-ap">500</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Total Appointments (Overall)</h3>
+                        <p id="overall-ap">500</p>
+                    </div>
+                </div>
+            </div>
+            <div class="users-table" style="display: none; margin-top: 45px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">UserID</th>
+                            <th style="text-align: center;color: black;">User Name</th>
+                            <th style="text-align: center;color: black;">Gender</th>
+                            <th style="text-align: center;color: black;">DOB</th>
+                            <th style="text-align: center;color: black;">Email</th>
+                            <th style="text-align: center;color: black;">Password</th>
+                            <th style="text-align: center;color: black;">User Image</th>
+                            <th style="text-align: center;color: black;">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;color: black;">1</td>
+                            <td style="text-align: center;color: black;">Shahnaj Begum</td>
+                            <td style="text-align: center;">Female</td>
+                            <td style="text-align: center;">1976/02/15</td>
+                            <td style="text-align: center;">shahnajbeg18@gmail.com</td>
+                            <td style="text-align: center;">ad8aca14caa</td>
+                            <td style="text-align: center;">/home/shihab/develop/img</td>
+                            <td style="text-align: center;">Patient</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="patients-table"style="display: none;margin-top: 45px;">Patient</div>
+            <div class="doctors-table"style="display: none;margin-top: 45px;">Doctor</div>
+            <div class="doctorsToday-table"style="display: none;margin-top: 45px;">d today</div>
+            <div class="apToday-table"style="display: none;margin-top: 45px;">ap today</div>
+            <div class="schedules-table"style="display: none;margin-top: 45px;">schedules</div>
+            <div class="history-table"style="display: none;margin-top: 45px;">history</div>
+        </div>
+    </div>
+</body>
+<script>
+    fetch('/check-session', { method: 'GET', credentials: 'same-origin' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.user) {
+            document.querySelector('.profile-menu').style.display = 'block';
+            document.querySelector('.profile-icon').src = data.user.profilePic;
+            document.querySelector("#profile-img").src = data.user.profilePic;
+            document.querySelector('h5').innerText = data.user.email;
+      
+        } else {
+            window.location.href = '/login';
+        }
+    })
+    .catch(error => console.error('Error checking session:', error));
+
+function logout() {
+    fetch('/logout', {
+        method: 'POST',
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = '/'; 
+        } else {
+            console.log('Logout failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error during logout:', error);
+    });
+}
+
+function fetchAdminStats() {
+    fetch('/admin-dashboard-stats', { method: 'GET', credentials: 'same-origin' })
+        .then(response => response.json())
+        .then(data => {
+            // Update statistics in the DOM
+            document.getElementById('total-users').textContent = data.totalUsers || '0';
+            document.getElementById('total-patients').textContent = data.totalPatients || '0';
+            document.getElementById('total-doctors').textContent = data.totalDoctors || '0';
+            document.getElementById('dr-available').textContent = data.availableDoctorsToday || '0';
+            document.getElementById('today-appointments').textContent = data.todayAppointments || '0';
+            document.getElementById('monthly-ap').textContent = data.monthlyAppointments || '0';
+            document.getElementById('yearly-ap').textContent = data.yearlyAppointments || '0';
+            document.getElementById('overall-ap').textContent = data.totalAppointments || '0';
+        })
+        .catch(error => {
+            console.error('Error fetching admin statistics:', error);
+        });
+}
+
+// Call the function when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    fetchAdminStats();  // Initial load
+    
+    setInterval(fetchAdminStats, 120000);  // Refresh every 2 minutes
+});
+
+
+function toggleDropdown() {
+    var dropdown = document.querySelector(".p-dropdown");
+  
+  // Toggling
+  if (dropdown.style.display === "flex") {
+    dropdown.style.display = "none";
+  } else {
+    dropdown.style.display = "flex";
+  }
+
+}
+
+document.getElementById('users').addEventListener("click",()=>{
+    document.querySelector('h1').innerText = "Users";
+    fetch('/users',{method:'GET',credentials:"same-origin"})
+    .then(response => response.json())
+    .then(data=>{
+        if (data.userData && data.userData.length > 0) { 
+            let userInfo = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">UserID</th>
+                            <th style="text-align: center;color: black;">User Name</th>
+                            <th style="text-align: center;color: black;">Gender</th>
+                            <th style="text-align: center;color: black;">DOB</th>
+                            <th style="text-align: center;color: black;">Age</th>
+                            <th style="text-align: center;color: black;">Email</th>
+                            <th style="text-align: center;color: black;">User Image</th>
+                            <th style="text-align: center;color: black;">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                        data.userData.forEach(user => {
+                            const dob = new Date(user.Birthyear);
+                            const formattedDate = dob.toLocaleDateString('en-GB');
+                            const insertDate = formattedDate.split('T')[0];
+
+                            userInfo += `<tr>
+                            <td style="text-align: center;color: black;">${user.UserID}</td>
+                            <td style="text-align: center;color: black;">${user.User_name}</td>
+                            <td style="text-align: center;color: black;">${user.Gender}</td>
+                            <td style="text-align: center;">${insertDate}</td>
+                            <td style="text-align: center;">${user.Age}</td>
+                            <td style="text-align: center;">${user.Email}</td>
+                            <td style="text-align: center;">${user.img}</td>
+                            <td style="text-align: center;">${user.Role}</td>
+                        </tr>`;
+                });
+
+                userInfo += `</tbody></table>`;
+                document.querySelector(".users-table").innerHTML = userInfo;
+        }
+        else {
+            document.querySelector('.users-table').innerHTML = '<p>No Users</p>';
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+document.getElementById('patients').addEventListener("click",()=>{
+    document.querySelector('h1').innerText = "Patients List";
+    fetch('/patients',{method:'GET',credentials:"same-origin"})
+    .then(response => response.json())
+    .then(data=>{
+        if (data.patientData && data.patientData.length > 0) { 
+            let userInfo = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">UserID</th>
+                            <th style="text-align: center;color: black;">User Name</th>
+                            <th style="text-align: center;color: black;">Gender</th>
+                            <th style="text-align: center;color: black;">DOB</th>
+                            <th style="text-align: center;color: black;">Age</th>
+                            <th style="text-align: center;color: black;">Email</th>
+                            <th style="text-align: center;color: black;">User Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                        data.patientData.forEach(user => {
+                            const dob = new Date(user.Birthyear);
+                            const formattedDate = dob.toLocaleDateString('en-GB');
+                            const insertDate = formattedDate.split('T')[0];
+
+                            userInfo += `<tr>
+                            <td style="text-align: center;color: black;">${user.UserID}</td>
+                            <td style="text-align: center;color: black;">${user.User_name}</td>
+                            <td style="text-align: center;color: black;">${user.Gender}</td>
+                            <td style="text-align: center;">${insertDate}</td>
+                            <td style="text-align: center;">${user.Age}</td>
+                            <td style="text-align: center;">${user.Email}</td>
+                            <td style="text-align: center;">${user.img}</td>
+                        </tr>`;
+                });
+
+                userInfo += `</tbody></table>`;
+                document.querySelector(".patients-table").innerHTML = userInfo;
+        }
+        else {
+            document.querySelector('.patients-table').innerHTML = '<p>No Patients</p>';
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+document.getElementById('doctors').addEventListener("click",()=>{
+    document.querySelector('h1').innerText = "Doctors List";
+    fetch('/doctors',{method:'GET',credentials:"same-origin"})
+    .then(response => response.json())
+    .then(data=>{
+        if (data.doctorData && data.doctorData.length > 0) { 
+            let userInfo = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">UserID</th>
+                            <th style="text-align: center;color: black;">User Name</th>
+                            <th style="text-align: center;color: black;">Gender</th>
+                            <th style="text-align: center;color: black;">DOB</th>
+                            <th style="text-align: center;color: black;">Age</th>
+                            <th style="text-align: center;color: black;">Email</th>
+                            <th style="text-align: center;color: black;">User Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                        data.doctorData.forEach(user => {
+                            const dob = new Date(user.Birthyear);
+                            const formattedDate = dob.toLocaleDateString('en-GB');
+                            const insertDate = formattedDate.split('T')[0];
+
+                            userInfo += `<tr>
+                            <td style="text-align: center;color: black;">${user.UserID}</td>
+                            <td style="text-align: center;color: black;">${user.User_name}</td>
+                            <td style="text-align: center;color: black;">${user.Gender}</td>
+                            <td style="text-align: center;">${insertDate}</td>
+                            <td style="text-align: center;">${user.Age}</td>
+                            <td style="text-align: center;">${user.Email}</td>
+                            <td style="text-align: center;">${user.img}</td>
+                        </tr>`;
+                });
+
+                userInfo += `</tbody></table>`;
+                document.querySelector(".doctors-table").innerHTML = userInfo;
+        }
+        else {
+            document.querySelector('.doctors-table').innerHTML = '<p>No Doctors</p>';
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+document.getElementById('doctorsToday').addEventListener("click",()=>{
+    document.querySelector('h1').innerText = 'Doctors Today';
+
+    fetch('/doctors/today',{method:'GET',credentials:"same-origin"})
+    .then(response => response.json())
+    .then(data=>{
+        if (data.availableDoctor && data.availableDoctor.length > 0) { 
+            let userInfo = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">UserID</th>
+                            <th style="text-align: center;color: black;">User Name</th>
+                            <th style="text-align: center;color: black;">Gender</th>
+                            <th style="text-align: center;color: black;">Specialty</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                        data.availableDoctor.forEach(user => {
+                            userInfo += `<tr>
+                            <td style="text-align: center;color: black;">${user.UserID}</td>
+                            <td style="text-align: center;color: black;">${user.User_name}</td>
+                            <td style="text-align: center;color: black;">${user.Gender}</td>
+                            <td style="text-align: center;color: black;">${user.S_name}</td>
+                        </tr>`;
+                });
+
+                userInfo += `</tbody></table>`;
+                document.querySelector(".doctorsToday-table").innerHTML = userInfo;
+        }
+        else {
+            document.querySelector('.doctorsToday-table').innerHTML = '<p>No Doctors Today</p>';
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+document.getElementById('appointmentsToday').addEventListener("click",()=>{
+    document.querySelector('h1').innerText = 'Appointments Today'
+    fetch('/appointments/today',{method:'GET',credentials:"same-origin"})
+    .then(response => response.json())
+    .then(data=>{
+        if (data.appointmentsToday && data.appointmentsToday.length > 0) { 
+            let userInfo = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">AppointID</th>
+                            <th style="text-align: center;color: black;">Patient Name</th>
+                            <th style="text-align: center;color: black;">Age</th>
+                            <th style="text-align: center;color: black;">Gender</th>
+                            <th style="text-align: center; color: black;">Doctor Name</th>
+                            <th style="text-align: center;color: black;">Appointment Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                        data.appointmentsToday.forEach(user => {
+                            userInfo += `<tr>
+                            <td style="text-align: center;color: black;">${user.AppointID}</td>
+                            <td style="text-align: center;color: black;">${user.PatientName}</td>
+                            <td style="text-align: center;color: black;">${user.Age}</td>
+                            <td style="text-align: center;color: black;">${user.Gender}</td>
+                            <td style="text-align: center;color: black;">${user.DoctorName}</td>
+                            <td style="text-align: center;color: black;">${user.A_time}</td>
+                        </tr>`;
+                });
+
+                userInfo += `</tbody></table>`;
+                document.querySelector(".apToday-table").innerHTML = userInfo;
+        }
+        else {
+            document.querySelector('.apToday-table').innerHTML = '<p>No Appointments Today</p>';
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+document.getElementById('schedules').addEventListener("click",()=>{
+    document.querySelector('h1').innerText = 'Doctors Schedules'
+    fetch('/doctors/schedules',{method:'GET',credentials:"same-origin"})
+    .then(response => response.json())
+    .then(data=>{
+        if (data.schedulesSet && data.schedulesSet.length > 0) { 
+            let userInfo = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">DoctorID</th>
+                            <th style="text-align: center;color: black;">Doctor Name</th>
+                            <th style="text-align: center;color: black;">Gender</th>
+                            <th style="text-align: center; color: black;">Schedules</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                        data.schedulesSet.forEach(user => {
+                            userInfo += `<tr>
+                            <td style="text-align: center;color: black;">${user.userID}</td>
+                            <td style="text-align: center;color: black;">${user.user_name}</td>
+                            <td style="text-align: center;color: black;">${user.Gender}</td>
+                            <td style="text-align: center;color: black;">${user.scDays}</td>
+                        </tr>`;
+                });
+
+                userInfo += `</tbody></table>`;
+                document.querySelector(".schedules-table").innerHTML = userInfo;
+        }
+        else {
+            document.querySelector('.schedules-table').innerHTML = '<p>No Schedules Set</p>';
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+document.getElementById('history').addEventListener("click",()=>{
+    document.querySelector('h1').innerText = 'Appointments History'
+    fetch('/all/appointments',{method:'GET',credentials:"same-origin"})
+    .then(response => response.json())
+    .then(data=>{
+        if (data.allAp && data.allAp.length > 0) { 
+            let userInfo = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">AppointID</th>
+                            <th style="text-align: center;color: black;">Patient Name</th>
+                            <th style="text-align: center;color: black;">Age</th>
+                            <th style="text-align: center;color: black;">Gender</th>
+                            <th style="text-align: center; color: black;">Doctor Name</th>
+                            <th style="text-align: center;color: black;">Appointment Date</th>
+                            <th style="text-align: center;color: black;">Appointment Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                        data.allAp.forEach(user => {
+
+                            const apDate = new Date(user.A_date);
+                            const formattedDate = apDate.toLocaleDateString('en-GB');
+                            const insertDate = formattedDate.split('T')[0];
+
+                            userInfo += `<tr>
+                            <td style="text-align: center;color: black;">${user.AppointID}</td>
+                            <td style="text-align: center;color: black;">${user.PatientName}</td>
+                            <td style="text-align: center;color: black;">${user.Age}</td>
+                            <td style="text-align: center;color: black;">${user.Gender}</td>
+                            <td style="text-align: center;color: black;">${user.DoctorName}</td>
+                            <td style="text-align: center;color: black;">${insertDate}</td>
+                            <td style="text-align: center;color: black;">${user.A_time}</td>
+                        </tr>`;
+                });
+
+                userInfo += `</tbody></table>`;
+                document.querySelector(".history-table").innerHTML = userInfo;
+        }
+        else {
+            document.querySelector('.history-table').innerHTML = '<p>No Appointments</p>';
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+function usersDropdown() {
+    const dropdown = document.querySelector(".dropdown");
+    const usersBtnStyle = document.querySelector(".sidebar-list-items li");
+ 
+  // Toggling
+  if (dropdown.style.display === "flex") {
+    dropdown.style.display = "none";
+  } else {
+    dropdown.style.display = "flex";
+  }
+}
+
+
+
+document.getElementById("users").addEventListener('click',()=>{
+    document.querySelector(".users-table").style.display = "flex";  
+    document.querySelector(".stats-container").style.display="none";
+    document.querySelector(".patients-table").style.display="none";
+    document.querySelector(".doctors-table").style.display="none";
+    document.querySelector(".doctorsToday-table").style.display="none";
+    document.querySelector(".apToday-table").style.display="none";
+    document.querySelector(".schedules-table").style.display="none";
+    document.querySelector(".history-table").style.display="none"; 
+})
+
+document.getElementById("patients").addEventListener('click',()=>{
+    document.querySelector(".patients-table").style.display="flex";
+    document.querySelector(".users-table").style.display = "none";  
+    document.querySelector(".stats-container").style.display="none";
+    document.querySelector(".doctors-table").style.display="none";
+    document.querySelector(".doctorsToday-table").style.display="none";
+    document.querySelector(".apToday-table").style.display="none";
+    document.querySelector(".schedules-table").style.display="none";
+    document.querySelector(".history-table").style.display="none"; 
+})
+
+document.getElementById("doctors").addEventListener('click',()=>{
+    document.querySelector(".doctors-table").style.display="flex";
+    document.querySelector(".patients-table").style.display="none";
+    document.querySelector(".users-table").style.display = "none";  
+    document.querySelector(".stats-container").style.display="none";
+    document.querySelector(".doctorsToday-table").style.display="none";
+    document.querySelector(".apToday-table").style.display="none";
+    document.querySelector(".schedules-table").style.display="none";
+    document.querySelector(".history-table").style.display="none"; 
+})
+
+document.getElementById("doctorsToday").addEventListener('click',()=>{
+    document.querySelector(".doctorsToday-table").style.display="flex";
+    document.querySelector(".doctors-table").style.display="none";
+    document.querySelector(".patients-table").style.display="none";
+    document.querySelector(".users-table").style.display = "none";  
+    document.querySelector(".stats-container").style.display="none";
+    document.querySelector(".apToday-table").style.display="none";
+    document.querySelector(".schedules-table").style.display="none";
+    document.querySelector(".history-table").style.display="none"; 
+})
+
+document.getElementById("appointmentsToday").addEventListener('click',()=>{
+    document.querySelector(".apToday-table").style.display="flex";
+    document.querySelector(".doctorsToday-table").style.display="none";
+    document.querySelector(".doctors-table").style.display="none";
+    document.querySelector(".patients-table").style.display="none";
+    document.querySelector(".users-table").style.display = "none";  
+    document.querySelector(".stats-container").style.display="none";
+    document.querySelector(".schedules-table").style.display="none";
+    document.querySelector(".history-table").style.display="none"; 
+})
+
+document.getElementById("schedules").addEventListener('click',()=>{
+    document.querySelector(".schedules-table").style.display="flex";
+    document.querySelector(".apToday-table").style.display="none";
+    document.querySelector(".doctorsToday-table").style.display="none";
+    document.querySelector(".doctors-table").style.display="none";
+    document.querySelector(".patients-table").style.display="none";
+    document.querySelector(".users-table").style.display = "none";  
+    document.querySelector(".stats-container").style.display="none";
+    document.querySelector(".history-table").style.display="none"; 
+})
+
+document.getElementById("history").addEventListener('click',()=>{
+    document.querySelector(".history-table").style.display="flex"; 
+    document.querySelector(".apToday-table").style.display="none";
+    document.querySelector(".doctorsToday-table").style.display="none";
+    document.querySelector(".doctors-table").style.display="none";
+    document.querySelector(".patients-table").style.display="none";
+    document.querySelector(".users-table").style.display = "none";  
+    document.querySelector(".stats-container").style.display="none";
+    document.querySelector(".schedules-table").style.display="none";
+})
+
+document.getElementById("stats").addEventListener('click',()=>{
+    document.querySelector(".stats-container").style.display="grid";
+    document.querySelector(".history-table").style.display="none"; 
+    document.querySelector(".apToday-table").style.display="none";
+    document.querySelector(".doctorsToday-table").style.display="none";
+    document.querySelector(".doctors-table").style.display="none";
+    document.querySelector(".patients-table").style.display="none";
+    document.querySelector(".users-table").style.display = "none";  
+    document.querySelector(".schedules-table").style.display="none";
+})
+
+
+
+document.querySelector(".dropdown").addEventListener('mouseenter',()=>{
+    const usersBtnStyle = document.querySelector(".sidebar-list-items li");
+    usersBtnStyle.style.backgroundColor = "rgb(219, 217, 217)";
+  })
+
+  document.querySelector(".sidebar-list-items li").addEventListener('mouseenter',()=>{
+    const usersBtnStyle = document.querySelector(".sidebar-list-items li");
+    usersBtnStyle.style.backgroundColor = "#2781e1";
+  })
+
+  document.querySelector(".sidebar-list-items li").addEventListener('mouseleave',()=>{
+    const usersBtnStyle = document.querySelector(".sidebar-list-items li");
+    usersBtnStyle.style.backgroundColor = "rgb(219, 217, 217)";
+})
+
+</script>
+</html>
