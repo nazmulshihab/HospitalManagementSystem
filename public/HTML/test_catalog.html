@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Catalog-Central Hospital</title>
+    <title>Test and Services</title>
     <link rel="stylesheet" href="../styles/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,8 +28,18 @@
                         <li id="catalog"><a href="/test/catalog">Test Catalog</a></li>
                     </ul>
                 </li>
-                <li><a href="appointment" target="_blank">Request Appointment</a></li>
-                <li><a href="login" target="_blank" class="login-btn">Log in</a></li>
+                <li><a href="\appointment">Request Appointment</a></li>
+                <li id="dash" style="display: none;"><a href="/dashboard">Dashboard</a></li>
+                <li>
+                    <div class="profile-menu" style="display: none">
+                        <img src="" alt="Profile" class="profile-icon" onclick="toggleDropdown()">
+                        <div class="p-dropdown">
+                            <a href="/dashboard">Dashboard</a>
+                            <a href="/logout" onclick="logout()">Log Out</a>
+                        </div>
+                    </div>
+                    <a href="login" class="login-btn">Log in</a>
+                </li>
             </ul>
         </nav>
     </header>
@@ -55,6 +65,36 @@
 </div>
 </body>
 <script>
+
+fetch('/check-session', { method: 'GET',credentials: 'same-origin' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.user) {
+                document.querySelector('.login-btn').style.display = 'none';
+                document.querySelector('.profile-menu').style.display = 'block';
+                document.getElementById('dash').style.display = "flex";
+                document.querySelector('.profile-icon').src = data.user.profilePic; 
+            }
+            else {
+            document.querySelector('.login-btn').style.display = 'block';
+            document.querySelector('.profile-menu').style.display = 'none';
+            document.getElementById('dash').style.display = "none";
+        }
+        })
+        .catch(error => console.error('Error checking session:', error));
+
+        function toggleDropdown() {
+        var dropdown = document.querySelector(".p-dropdown");
+  
+        
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+            } else {
+                dropdown.style.display = "block";
+            
+            }
+        }
+
 fetch('/list', { method: 'GET', credentials: 'same-origin' })
     .then(response => response.json())
     .then(data => {

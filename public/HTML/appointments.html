@@ -29,6 +29,7 @@
                     </ul>
                 </li>
                 <li><a href="appointment" target="_blank">Request Appointment</a></li>
+                <li id="dash" style="display: none;"><a href="/dashboard">Dashboard</a></li>
                 <li>
                     <div class="profile-menu" style="display: none">
                         <img src="" alt="Profile" class="profile-icon" onclick="toggleDropdown()">
@@ -71,13 +72,14 @@
             if (data.user) {
                 document.querySelector('.login-btn').style.display = 'none';
                 document.querySelector('.profile-menu').style.display = 'block';
-
+                document.getElementById('dash').style.display = "flex";
             
                 document.querySelector('.profile-icon').src = data.user.profilePic; 
             }
             else {  
             document.querySelector('.login-btn').style.display = 'block';
             document.querySelector('.profile-menu').style.display = 'none';
+            document.getElementById('dash').style.display = "none";
         }
         })
         .catch(error => console.error('Error checking session:', error));
