@@ -15,7 +15,7 @@
 <body>
     <header>
         <div class="left-sec">
-            <a href="/"><img id="Hospital-logo" src="../images/Hospital_logo_2.svg" alt="Central Hospital Logo"></a>
+            <a href="/"><img id="Hospital-logo" src="../images/Hospital_logo.png" alt="Central Hospital Logo"></a>
             <a href="/"><h3>Central Hospital</h3></a>
         </div>
         
@@ -205,17 +205,6 @@ document.getElementById('myAppointments').addEventListener('click',()=>{
                 });
                 myAp += `</tbody></table>`;
                 document.querySelector('.patient-appointments').innerHTML = myAp;
-
-                // data.myAppointments.forEach((appointment,index) => {
-                //     let statusBtn = document.querySelectorAll('button')[index];
-                //     if (statusBtn.innerText === 'Pending') {
-                //         statusBtn.style.backgroundColor = 'yellow';
-                //     } else if (statusBtn.innerText === 'Approved') {
-                //         statusBtn.style.backgroundColor = '#2aff04';
-                //     } else if (statusBtn.innerText === 'Rejected') {
-                //         statusBtn.style.backgroundColor = 'red';
-                //     }
-                // })
 
                 document.querySelectorAll('.status-btn').forEach(button => {
     const status = button.innerText.trim(); // Get the button's status text

@@ -15,7 +15,7 @@
 <body>
     <header>
         <div class="left-sec">
-            <a href="/"><img id="Hospital-logo" src="../images/Hospital_logo_2.svg" alt="Central Hospital Logo"></a>
+            <a href="/"><img id="Hospital-logo" src="../images/Hospital_logo.png" alt="Central Hospital Logo"></a>
             <a href="/"><h3>Central Hospital</h3></a>
         </div>
         
@@ -28,6 +28,7 @@
                         <li><a href="/test/catalog">Test Catalog</a></li>
                     </ul>
                 </li>
+                <li><a href="appointment" target="_blank">Request Appointment</a></li>
                 <li><a href="/doctor-dashboard">Dashboard</a></li>
                 <li>
                     <div class="profile-menu">
@@ -51,6 +52,10 @@
                 <button id="logout-btn"><a href="/logout" onclick="logout()">Log Out</a></button>
             </div>
             <ul>
+                <div class="p-list-items">
+                    <li id="myAppointments" onclick="viewAppointments()">My Appointments</li>
+                    <li id="diagnosis" onclick="viewDH()">Diagnoses History</li>
+                </div>
                 <div class="d-list-items">
                 <li id="approval-section" onclick="approvalSection()">Approve Appointments</li>
                 <li id="todayAp" onclick="todayApSection()">Today's Appointments</li>
@@ -62,6 +67,27 @@
         <div class="dr-dash-main-content">
             <div class="dr-dash-header">
                 <h1>Doctor's Dashboard</h1>
+            </div>
+            <div class="diag-history" style="display: none;"></div>
+            <div class="patient-appointments">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">Doctor Name</th>
+                            <th style="text-align: center;color: black;">Appointment Date</th>
+                            <th style="text-align: center;color: black;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;color: black;">John Doe</td>
+                            <td style="text-align: center;color: black;">2024-12-05</td>
+                            <td style="text-align: center;">
+                                <button id="status" type="button" style="background-color: yellow;">Pending</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="pending-appointments-container">
                 <table>
@@ -96,7 +122,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="todayApSec"><p>No Appointments Today</p></div>
+            <div class="todayApSec" style="display: none;"><p>No Appointments Today</p></div>
             <div class="historySec">
                 <table>
                     <thead>
@@ -120,19 +146,19 @@
             <div class="dr-dash-bodycontent">
                 <div class="stats-container">
                     <div class="stat-box">
-                        <h3>Today's Total Appointments</h3>
+                        <h3>Total Appointments <br>(Today)</br></h3>
                         <p id="today-appointments">20</p>
                     </div>
                     <div class="stat-box">
-                        <h3>Total Treated Patients (This Month)</h3>
+                        <h3>Total Treated Patients<br>(This Month)</br></h3>
                         <p id="month-treated">50</p>
                     </div>
                     <div class="stat-box">
-                        <h3>Total Treated Patients (This Year)</h3>
+                        <h3>Total Appointments <br>(This Year)</br></h3>
                         <p id="year-treated">250</p>
                     </div>
                     <div class="stat-box">
-                        <h3>Total Patients Treated (All Time)</h3>
+                        <h3>Total Treated Patients <br>(All Time)</br></h3>
                         <p id="overall-treated">500</p>
                     </div>
                 </div>
@@ -234,6 +260,104 @@ function toggleDropdown() {
   }
 }
 
+document.getElementById('myAppointments').addEventListener('click',()=>{
+    fetch('/my-appointments', { method: 'GET', credentials: 'same-origin' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.myAppointments && data.myAppointments.length > 0) { 
+            let myAp = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">Serial No.</th>
+                            <th style="text-align: center; color: black;">Doctor Name</th>
+                            <th style="text-align: center;color: black;">Appointment Date<br>(MM-DD-YYYY)</th>
+                            <th style="text-align: center;color: black;">Appointment Time</th>
+                            <th style="text-align: center;color: black;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                data.myAppointments.forEach(appointment => {
+                    myAp += `<tr>
+                            <td style="text-align: center;color: black;">${appointment.SerialNO}</td>
+                            <td style="text-align: center;color: black;">${appointment.User_name}</td>
+                            <td style="text-align: center;color: black;">${new Date(appointment.A_date).toLocaleDateString()}</td>
+                            <td style="text-align: center;color: black;">${appointment.A_time}</td>
+                            <td style="text-align: center;">
+                                <button class="status-btn" id="status" type="button" >${appointment.Status}</button>
+                            </td>
+                        </tr>`;
+                });
+                myAp += `</tbody></table>`;
+                document.querySelector('.patient-appointments').innerHTML = myAp;
+
+                document.querySelectorAll('.status-btn').forEach(button => {
+    const status = button.innerText.trim(); // Get the button's status text
+    console.log(status);
+    if (status === 'Pending') {
+        button.style.backgroundColor = 'yellow';
+        return;
+    } else if (status === 'Approved') {
+        button.style.backgroundColor = '#2aff04';
+        return;
+    } else if (status === 'Rejected') {
+        button.style.backgroundColor = 'red';
+        return;
+    }
+});
+
+        } else {
+            let txt = document.querySelector('.patient-appointments');
+            txt.innerHTML = '<p>No Appointments</p>';
+            txt.style.position = "absolute";
+            txt.style.top = "250px";
+            txt.style.left = "580px";
+            txt.style.fontSize = "50px";
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
+document.getElementById('diagnosis').addEventListener('click',()=>{
+    fetch('/diagnosis/history', { method: 'GET', credentials: 'same-origin' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.diagnosis && data.diagnosis.length > 0) { 
+            let diag = `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; color: black;">DiagnosisID</th>
+                            <th style="text-align: center;color: black;">Test Name</th>
+                            <th style="text-align: center;color: black;">Diagnosis Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                data.diagnosis.forEach(record => {
+                    const diag_date = new Date(record.Diagnosis_Date);
+                    const formattedDate = diag_date.toLocaleDateString('en-GB');
+                    const insertDate = formattedDate.split('T')[0];
+                    diag += `<tr>
+                            <td style="text-align: center;color: black;">${record.DiagnosisID}</td>
+                            <td style="text-align: center;color: black;">${record.Test_name}</td>
+                            <td style="text-align: center;">${insertDate}</td>
+                        </tr>`;
+                });
+                diag += `</tbody></table>`;
+                document.querySelector('.diag-history').innerHTML = diag;
+
+        } else {
+            let txt = document.querySelector('.diag-history');
+            txt.innerHTML = '<p>No Diagnosis History</p>';
+            txt.style.position = "absolute";
+            txt.style.top = "250px";
+            txt.style.left = "580px";
+            txt.style.fontSize = "50px";
+        }
+    })
+    .catch(error => console.error('Error fetching Data:', error));
+})
+
 document.querySelector("#approval-section").addEventListener('click',()=>{
     fetch('/get-pending-appointments',{method:'GET',credentials:"same-origin"})
     .then(response=>response.json())
@@ -296,8 +420,12 @@ document.querySelector("#approval-section").addEventListener('click',()=>{
 
                 
             } else {
-                // Handle no appointments case
-                document.querySelector('.pending-appointments-container').innerHTML = '<p>No Pending Appointments</p>';
+                let txt = document.querySelector('.pending-appointments-container');
+                txt.innerHTML = '<p>No Pending Appointments</p>';
+                txt.style.position = "absolute";
+                txt.style.top = "250px";
+                txt.style.left = "520px";
+                txt.style.fontSize = "50px";
             }
 })
     .catch(error => console.error('Error fetching pending appointments:', error));
@@ -346,10 +474,20 @@ fetch('/appointments-today', { method: 'GET', credentials: 'same-origin' })
                         
                         document.querySelector('.todayApSec').innerHTML = upcomingHTML;
                     } else {
-                        document.querySelector('.todayApSec').innerHTML = '<p>No Appointments Today.</p>';
+                        let txt = document.querySelector('.todayApSec');
+                        txt.innerHTML = '<p>No Appointments Today.</p>';
+                        txt.style.position = "absolute";
+                        txt.style.top = "250px";
+                        txt.style.left = "520px";
+                        txt.style.fontSize = "50px";
                     }
                 } else {
-                    document.querySelector('.todayApSec').innerHTML = '<p>No upcoming schedules.</p>';
+                    let txt = document.querySelector('.todayApSec');
+                    txt.innerHTML = '<p>No upcoming schedules.</p>';
+                    txt.style.position = "absolute";
+                    txt.style.top = "250px";
+                    txt.style.left = "510px";
+                    txt.style.fontSize = "50px";   
                 }
             }) 
             .catch(err => console.error('Error:', err));
@@ -402,13 +540,20 @@ document.getElementById('history').addEventListener('click',()=>{
                 })
 
         } else {
-            document.querySelector('.historySec').innerHTML = '<p>Nothing to Show</p>';
+                        let txt = document.querySelector('.historySec');
+                        txt.innerHTML = '<p>Nothing to Display</p>';
+                        txt.style.position = "absolute";
+                        txt.style.top = "250px";
+                        txt.style.left = "530px";
+                        txt.style.fontSize = "50px";
         }
     })
     .catch(error => console.error('Error fetching Data:', error));
 })
 
 function todayApSection() {
+    let myAppointments = document.querySelector('.patient-appointments');
+    let dh = document.querySelector('.diag-history');
     let statBodyContent = document.querySelector(".dr-dash-bodycontent");
     let approveAppointmentSection = document.querySelector(".pending-appointments-container");
     let todayApSec = document.querySelector(".todayApSec");
@@ -417,6 +562,8 @@ function todayApSection() {
     if (!todayApSec.style.display || todayApSec.style.display === "none") {
         document.querySelector('h1').innerText = "Today's Appointments";
         todayApSec.style.display = "flex";
+        myAppointments.style.display = "none";
+        dh.style.display = "none";
         statBodyContent.style.display = "none";
         approveAppointmentSection.style.display = "none";
         historySec.style.display = "none";
@@ -424,6 +571,8 @@ function todayApSection() {
         // Otherwise, hide it
         document.querySelector('h1').innerText = "Dashboard";
         statBodyContent.style.display = "inline-block";
+        myAppointments.style.display = "none";
+        dh.style.display = "none";
         todayApSec.style.display = "none";
         approveAppointmentSection.style.display = "none";
         historySec.style.display = "none";
@@ -431,21 +580,27 @@ function todayApSection() {
 }
 
 function approvalSection() {
+    let myAppointments = document.querySelector('.patient-appointments');
+    let dh = document.querySelector('.diag-history');
     let statBodyContent = document.querySelector(".dr-dash-bodycontent");
     let approveAppointmentSection = document.querySelector(".pending-appointments-container");
     let todayApSec = document.querySelector(".todayApSec");
     let historySec = document.querySelector(".historySec");
 
     if (!approveAppointmentSection.style.display || approveAppointmentSection.style.display === "none") {
-        document.querySelector('h1').innerText = "Approve Appointments";
         approveAppointmentSection.style.display = "flex";
+        document.querySelector('h1').innerText = "Approve Appointments";
+        myAppointments.style.display = "none";
         statBodyContent.style.display = "none";
+        dh.style.display = "none";
         todayApSec.style.display = "none";
         historySec.style.display = "none";
     } else {
         // Otherwise, hide it
         document.querySelector('h1').innerText = "Dashboard";
         statBodyContent.style.display = "inline-block";
+        myAppointments.style.display = "none";
+        dh.style.display = "none";
         approveAppointmentSection.style.display = "none";
         todayApSec.style.display = "none";
         historySec.style.display = "none";
@@ -453,6 +608,8 @@ function approvalSection() {
 }
 
 function historySection() {
+    let myAppointments = document.querySelector('.patient-appointments');
+    let dh = document.querySelector('.diag-history');
     let statBodyContent = document.querySelector(".dr-dash-bodycontent");
     let approveAppointmentSection = document.querySelector(".pending-appointments-container");
     let todayApSec = document.querySelector(".todayApSec");
@@ -461,6 +618,8 @@ function historySection() {
     if (!historySec.style.display || historySec.style.display === "none") {
         document.querySelector('h1').innerText = "History";
         historySec.style.display = "flex";
+        myAppointments.style.display = "none";
+        dh.style.display = "none";
         statBodyContent.style.display = "none";
         approveAppointmentSection.style.display = "none";
         todayApSec.style.display = "none";
@@ -468,8 +627,68 @@ function historySection() {
         // Otherwise, hide it
         document.querySelector('h1').innerText = "Dashboard";
         statBodyContent.style.display = "inline-block";
+        myAppointments.style.display = "none";
+        dh.style.display = "none";
         todayApSec.style.display = "none";
         approveAppointmentSection.style.display = "none";
+        historySec.style.display = "none";
+    }
+}
+
+function viewAppointments(){
+    let myAppointments = document.querySelector('.patient-appointments');
+    let dh = document.querySelector('.diag-history');
+    let statBodyContent = document.querySelector(".dr-dash-bodycontent");
+    let approveAppointmentSection = document.querySelector(".pending-appointments-container");
+    let todayApSec = document.querySelector(".todayApSec");
+    let historySec = document.querySelector(".historySec");
+
+
+    if (!myAppointments.style.display || myAppointments.style.display === "none") {
+        myAppointments.style.display = "flex";
+        document.querySelector('h1').innerText = "My Appointments";
+        statBodyContent.style.display = "none";
+        dh.style.display = "none";
+        approveAppointmentSection.style.display = "none";
+        todayApSec.style.display = "none";
+        historySec.style.display = "none";
+    } else {
+        // Otherwise, hide it
+        document.querySelector('h1').innerText = "Dashboard";
+        statBodyContent.style.display = "inline-block";
+        myAppointments.style.display = "none";
+        dh.style.display = "none";
+        approveAppointmentSection.style.display = "none";
+        todayApSec.style.display = "none";
+        historySec.style.display = "none";
+    }
+}
+
+function viewDH(){
+    let myAppointments = document.querySelector('.patient-appointments');
+    let dh = document.querySelector('.diag-history');
+    let statBodyContent = document.querySelector(".dr-dash-bodycontent");
+    let approveAppointmentSection = document.querySelector(".pending-appointments-container");
+    let todayApSec = document.querySelector(".todayApSec");
+    let historySec = document.querySelector(".historySec");
+
+    if (!dh.style.display || dh.style.display === "none") {
+        document.querySelector('h1').innerText = "Diagnoses History";
+        dh.style.display = "flex";
+        myAppointments.style.display = "none";
+        statBodyContent.style.display = "none";
+        approveAppointmentSection.style.display = "none";
+        todayApSec.style.display = "none";
+        historySec.style.display = "none";
+        
+    } else {
+        // Otherwise, hide it
+        document.querySelector('h1').innerText = "Dashboard";
+        statBodyContent.style.display = "inline-block";
+        dh.style.display = "none";
+        myAppointments.style.display = "none";
+        approveAppointmentSection.style.display = "none";
+        todayApSec.style.display = "none";
         historySec.style.display = "none";
     }
 }
