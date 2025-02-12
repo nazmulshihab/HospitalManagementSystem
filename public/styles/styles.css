@@ -777,7 +777,7 @@ table {
 
 th, td {
     text-align: left;
-    padding: 10px;
+    padding: 2px;
     border: 1px solid #ddd;
 }
 
@@ -836,6 +836,49 @@ th {
     display: flex;
     flex-direction: column;
     padding: 5px;
+}
+
+#edit{
+    display: none;
+    background-color: #459bf7;
+    width: 5vw;
+    justify-content: center;
+}
+
+#edit:hover{
+    background-color: #87baf0;
+    cursor: pointer;
+}
+
+#edit:active{
+    background-color: #1380f4;
+    cursor: pointer;
+}
+
+.infoEdit{
+    display: grid;
+    grid-template-columns: 300px 300px 300px;
+    gap: 30px;
+    margin-left: 50px;
+}
+
+#editForm{
+    display: none;
+}
+
+#submitBtnSet{
+    width: 50px;
+    margin-left: 50px;
+    margin-top: 15px;
+    background-color: #54f324;
+}
+#submitBtnSet:hover{
+    background-color: #8af36a;
+    cursor: pointer;
+}
+
+#submitBtnSet:active{
+    background-color: #49f116;
 }
 
 #addUser{

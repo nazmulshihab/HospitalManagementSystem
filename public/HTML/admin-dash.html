@@ -109,6 +109,15 @@
                     </div>
                 </div>
             </div>
+            <button id="edit">Edit</button>
+            <form action="/doctorSpecialty" method="post" id="editForm">
+                <div class="infoEdit">
+                    <input type="number" name="doctorID" id="doctorID" placeholder="DoctorID" required>
+                <input type="number" name="spID" id="specialty" placeholder="Specialties">
+                <input type="text" name="experiences" id="experience" placeholder="Experience">   
+                </div>
+                <button type="submit" id="submitBtnSet">Set</button>
+            </form>
             <button id="addUser">Add User</button>
             <form action="/register" method="post" id="userform">
                 <div class="addUserForm">
@@ -339,28 +348,30 @@ document.getElementById('doctors').addEventListener("click",()=>{
                     <thead>
                         <tr>
                             <th style="text-align: center; color: black;">UserID</th>
+                            <th style="text-align: center; color: black;">BranchID</th>
                             <th style="text-align: center;color: black;">User Name</th>
-                            <th style="text-align: center;color: black;">Gender</th>
-                            <th style="text-align: center;color: black;">DOB</th>
-                            <th style="text-align: center;color: black;">Age</th>
-                            <th style="text-align: center;color: black;">Email</th>
-                            <th style="text-align: center;color: black;">User Image</th>
+                            <th style="text-align: center;color: black;">Specialties</th>
+                            <th style="text-align: center;color: black;">Experiences</th>
+                            <th style="text-align: center;color: black;">Fee</th>
+                            <th style="text-align: center;color: black;">ScDays</th>
+                            <th style="text-align: center;color: black;">Slots</th>
                         </tr>
                     </thead>
                     <tbody>`;
                         data.doctorData.forEach(user => {
-                            const dob = new Date(user.Birthyear);
-                            const formattedDate = dob.toLocaleDateString('en-GB');
-                            const insertDate = formattedDate.split('T')[0];
+                            // const dob = new Date(user.Birthyear);
+                            // const formattedDate = dob.toLocaleDateString('en-GB');
+                            // const insertDate = formattedDate.split('T')[0];
 
                             userInfo += `<tr>
                             <td style="text-align: center;color: black;">${user.UserID}</td>
+                            <td style="text-align: center;color: black;">${user.branchID}</td>
                             <td style="text-align: center;color: black;">${user.User_name}</td>
-                            <td style="text-align: center;color: black;">${user.Gender}</td>
-                            <td style="text-align: center;">${insertDate}</td>
-                            <td style="text-align: center;">${user.Age}</td>
-                            <td style="text-align: center;">${user.Email}</td>
-                            <td style="text-align: center;">${user.img}</td>
+                            <td style="text-align: center;">${user.s_name}</td>
+                            <td style="text-align: center;">${user.Experiances}</td>
+                            <td style="text-align: center;">${user.fee}</td>
+                            <td style="text-align: center;">${user.scDays}</td>
+                            <td style="text-align: center;">${user.slots}</td>
                         </tr>`;
                 });
 
@@ -548,6 +559,8 @@ document.getElementById("users").addEventListener('click',()=>{
     document.getElementById("addUser").style.display = "flex";
     document.querySelector(".users-table").style.display = "flex";
     document.getElementById("userform").style.display = "none";  
+    document.getElementById("edit").style.display = "none";
+    document.getElementById("editForm").style.display = "none";
     document.querySelector(".stats-container").style.display="none";
     document.querySelector(".patients-table").style.display="none";
     document.querySelector(".doctors-table").style.display="none";
@@ -560,6 +573,8 @@ document.getElementById("users").addEventListener('click',()=>{
 document.getElementById("patients").addEventListener('click',()=>{
     document.querySelector(".patients-table").style.display="flex";
     document.getElementById("addUser").style.display = "none";
+    document.getElementById("edit").style.display = "none";
+    document.getElementById("editForm").style.display = "none";
     document.getElementById("userform").style.display = "none";
     document.querySelector(".users-table").style.display = "none";  
     document.querySelector(".stats-container").style.display="none";
@@ -572,6 +587,8 @@ document.getElementById("patients").addEventListener('click',()=>{
 
 document.getElementById("doctors").addEventListener('click',()=>{
     document.querySelector(".doctors-table").style.display="flex";
+    document.getElementById("edit").style.display = "flex";
+    document.getElementById("editForm").style.display = "none";
     document.getElementById("addUser").style.display = "none";
     document.getElementById("userform").style.display = "none";
     document.querySelector(".patients-table").style.display="none";
@@ -586,6 +603,8 @@ document.getElementById("doctors").addEventListener('click',()=>{
 document.getElementById("doctorsToday").addEventListener('click',()=>{
     document.querySelector(".doctorsToday-table").style.display="flex";
     document.getElementById("addUser").style.display = "none";
+    document.getElementById("edit").style.display = "none";
+    document.getElementById("editForm").style.display = "none";
     document.getElementById("userform").style.display = "none";
     document.querySelector(".doctors-table").style.display="none";
     document.querySelector(".patients-table").style.display="none";
@@ -599,6 +618,8 @@ document.getElementById("doctorsToday").addEventListener('click',()=>{
 document.getElementById("appointmentsToday").addEventListener('click',()=>{
     document.querySelector(".apToday-table").style.display="flex";
     document.getElementById("addUser").style.display = "none";
+    document.getElementById("edit").style.display = "none";
+    document.getElementById("editForm").style.display = "none";
     document.getElementById("userform").style.display = "none";
     document.querySelector(".doctorsToday-table").style.display="none";
     document.querySelector(".doctors-table").style.display="none";
@@ -612,6 +633,8 @@ document.getElementById("appointmentsToday").addEventListener('click',()=>{
 document.getElementById("schedules").addEventListener('click',()=>{
     document.querySelector(".schedules-table").style.display="flex";
     document.getElementById("addUser").style.display = "none";
+    document.getElementById("edit").style.display = "none";
+    document.getElementById("editForm").style.display = "none";
     document.getElementById("userform").style.display = "none";
     document.querySelector(".apToday-table").style.display="none";
     document.querySelector(".doctorsToday-table").style.display="none";
@@ -625,6 +648,8 @@ document.getElementById("schedules").addEventListener('click',()=>{
 document.getElementById("history").addEventListener('click',()=>{
     document.querySelector(".history-table").style.display="flex"; 
     document.getElementById("addUser").style.display = "none";
+    document.getElementById("edit").style.display = "none";
+    document.getElementById("editForm").style.display = "none";
     document.getElementById("userform").style.display = "none";
     document.querySelector(".apToday-table").style.display="none";
     document.querySelector(".doctorsToday-table").style.display="none";
@@ -638,6 +663,8 @@ document.getElementById("history").addEventListener('click',()=>{
 document.getElementById("stats").addEventListener('click',()=>{
     document.querySelector(".stats-container").style.display="grid";
     document.getElementById("addUser").style.display = "none";
+    document.getElementById("edit").style.display = "none";
+    document.getElementById("editForm").style.display = "none";
     document.getElementById("userform").style.display = "none";
     document.querySelector(".history-table").style.display="none"; 
     document.querySelector(".apToday-table").style.display="none";
@@ -650,6 +677,10 @@ document.getElementById("stats").addEventListener('click',()=>{
 
 document.getElementById("addUser").addEventListener('click',()=>{
     document.getElementById("userform").style.display = "grid";
+})
+
+document.getElementById("edit").addEventListener('click',()=>{
+    document.getElementById("editForm").style.display = "grid";
 })
 
 

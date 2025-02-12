@@ -614,6 +614,29 @@ app.post('/reject-appointment',(req,res)=>{
     })
 })
 
+app.post('/doctorSpecialty',(req,res)=>{
+    const { doctorID,spID,experiences} = req.body;
+
+    const query1 = `INSERT INTO Doctor_Specialty (DoctorID,SpID) VALUES (?,?)`;
+    db.query(query1,[doctorID,spID],(err,result)=>{
+        if(err)
+        {
+            console.log('Error Occured')
+        }
+
+        const query2 = `UPDATE Doctors SET Experiances = ? WHERE DoctorID = ?`;
+        db.query(query2,[experiences,doctorID],(err,result)=>{
+        if(err)
+        {
+            console.log('Error Occured')
+        }
+        console.log("Successfully Updated into Doctors Table")
+    })
+    res.redirect('/dashboard');
+    });
+
+})
+
 app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/HTML/', 'create_account.html'));
 });
@@ -648,7 +671,30 @@ app.get('/patients',isAuthenticated,(req,res)=>{
 
 app.get('/doctors',isAuthenticated,(req,res)=>{
     
-    const query = `SELECT u.UserID, u.User_name, u.Gender,YEAR(CURDATE())-YEAR(Birthyear) AS Age, u.Birthyear, u.Email, u.Pass,u.img  FROM Users u JOIN Doctors d ON d.DoctorID = u.UserID Where u.Role = "Doctor"`;
+    const query = `SELECT 
+    u.UserID, 
+    d.branchID,
+    u.User_name, 
+    u.Gender, 
+    YEAR(CURDATE()) - YEAR(Birthyear) AS Age, 
+    u.Birthyear, 
+    u.Email, 
+    u.Pass, 
+    u.img, 
+    d.Experiances, 
+    d.fee, 
+    COALESCE(sp.s_name, 'Not Set') AS s_name,
+    COALESCE(GROUP_CONCAT(DISTINCT sc.scDays SEPARATOR ', '), 'Not Set') AS scDays,  
+    COALESCE(GROUP_CONCAT(DISTINCT sc.slots SEPARATOR ', '), 'Not Set') AS slots
+FROM Users u 
+JOIN Doctors d ON d.DoctorID = u.UserID 
+LEFT JOIN Doctor_Specialty ds ON d.DoctorID = ds.DoctorID  
+LEFT JOIN Specialties sp ON sp.SpID = ds.SpID  
+LEFT JOIN Schedules sc ON sc.DoctorID = d.DoctorID  
+WHERE u.Role = "Doctor"
+GROUP BY 
+    u.UserID,d.branchID,u.User_name, u.Gender, u.Birthyear, u.Email, u.Pass, 
+    u.img, d.Experiances, d.fee, sp.s_name;`;
     db.query(query,(err,result)=>{
         if(err)
         {
