@@ -302,9 +302,8 @@ app.get('/admin-dashboard-stats', (req, res) => {
     const totalUsersQuery = 'SELECT COUNT(*) AS count FROM Users';
     const totalPatientsQuery = 'SELECT COUNT(*) AS count FROM Users WHERE Role = "Patient"';
     const totalDoctorsQuery = 'SELECT COUNT(*) AS count FROM Users WHERE Role = "Doctor"';
-    const availableDoctorsTodayQuery = `SELECT COUNT(DISTINCT DoctorID) AS count 
-                                         FROM Appointments 
-                                         WHERE Status = 'Approved' AND DATE(A_date) = CURDATE()`;
+    const availableDoctorsTodayQuery = `SELECT COUNT(DoctorID) AS count FROM Schedules  WHERE ScDays = DAYNAME(CURDATE())`;
+
     const todayAppointmentsQuery = `SELECT COUNT(*) AS count 
                                     FROM Appointments 
                                     WHERE Status = 'Approved' AND DATE(A_date) = CURDATE()`;
@@ -319,7 +318,6 @@ app.get('/admin-dashboard-stats', (req, res) => {
                                        AND YEAR(A_date) = YEAR(CURDATE())`;
     const totalAppointmentsQuery = 'SELECT COUNT(*) AS count FROM Appointments WHERE Status = "Approved"';
 
-    // Execute all queries asynchronously
     Promise.all([
         new Promise((resolve, reject) => {
             db.query(totalUsersQuery, (err, result) => {
@@ -785,7 +783,7 @@ app.get('/invalid',(req,res)=>{
 })
 
 app.post('/register', async (req, res) => {
-    const { name, birthyear, gender, email, password, confirmPassword } = req.body;
+    const { name, birthyear, gender, role, email, password, confirmPassword } = req.body;
 
     if (password !== confirmPassword) {
         //return res.status(400).json({ message: 'Password does not match' });
@@ -799,8 +797,8 @@ app.post('/register', async (req, res) => {
         const hashedPassword = crypto.createHash('sha224').update(password).digest('hex');
 
         // Insert user into Users table
-        const query = 'INSERT INTO Users (User_name, Birthyear, Gender, Email, Pass) VALUES (?, ?, ?, ?, ?)';
-        db.query(query, [name, birthyear, gender, email, hashedPassword], (err, result) => {
+        const query = 'INSERT INTO Users (User_name, Birthyear, Gender, Email, Pass,Role) VALUES (?, ?, ?, ?, ?, ?)';
+        db.query(query, [name, birthyear, gender, email, hashedPassword,role], (err, result) => {
             if (err) {
                 console.log(err);
                 return res.status(500).json({ message: 'Error creating user' });
@@ -809,27 +807,66 @@ app.post('/register', async (req, res) => {
             // Get the user ID
             const userId = result.insertId;
 
-            // Insert patient into Patients table
-            const insertPatient = `
-                INSERT INTO Patients (PatientID) 
-                SELECT ? 
-                FROM DUAL
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM Patients WHERE PatientID = ?
-                )
-            `;
-            db.query(insertPatient, [userId, userId], (err, result) => {
-                if (err) {
-                    console.error('Error inserting patient:', err);
-                    return res.status(500).send('Error inserting patient data.');
-                }
-                console.log("Patient inserted successfully");
+            let insertRoleQuery;
+            if (role === 'Patient') {
+                insertRoleQuery = `
+                    INSERT INTO Patients (PatientID) 
+                    SELECT ? FROM DUAL 
+                    WHERE NOT EXISTS (SELECT 1 FROM Patients WHERE PatientID = ?)
+                `;
+                db.query(insertRoleQuery, [userId, userId], (err, result) => {
+                    if (err) {
+                        console.error('Error inserting patient:', err);
+                        return res.status(500).send('Error inserting patient data.');
+                    }
+                    console.log("Patient inserted successfully");
+    
+                    // Send the response after both operations complete
+                    setTimeout(() => {
+                        res.sendFile(path.join(__dirname, '/public/HTML/', 'registered.html'));
+                    }, 1500);
+                });
+            } else{
+                insertRoleQuery = `
+                    INSERT INTO Doctors (DoctorID) 
+                    SELECT ? FROM DUAL 
+                    WHERE NOT EXISTS (SELECT 1 FROM Doctors WHERE DoctorID = ?)
+                `;
+                db.query(insertRoleQuery, [userId, userId], (err, result) => {
+                    if (err) {
+                        console.error('Error inserting patient:', err);
+                        return res.status(500).send('Error inserting patient data.');
+                    }
+                    console.log("Doctor inserted successfully");
+    
+                    // Send the response after both operations complete
+                    setTimeout(() => {
+                        res.sendFile(path.join(__dirname, '/public/HTML/', 'registered.html'));
+                    }, 1500);
+                });
+            }
 
-                // Send the response after both operations complete
-                setTimeout(() => {
-                    res.sendFile(path.join(__dirname, '/public/HTML/', 'registered.html'));
-                }, 1500);
-            });
+            // Insert patient into Patients table
+            // const insertPatient = `
+            //     INSERT INTO Patients (PatientID) 
+            //     SELECT ? 
+            //     FROM DUAL
+            //     WHERE NOT EXISTS (
+            //         SELECT 1 FROM Patients WHERE PatientID = ?
+            //     )
+            // `;
+            // db.query(insertPatient, [userId, userId], (err, result) => {
+            //     if (err) {
+            //         console.error('Error inserting patient:', err);
+            //         return res.status(500).send('Error inserting patient data.');
+            //     }
+            //     console.log("Patient inserted successfully");
+
+            //     // Send the response after both operations complete
+            //     setTimeout(() => {
+            //         res.sendFile(path.join(__dirname, '/public/HTML/', 'registered.html'));
+            //     }, 1500);
+            // });
         });
     } catch (err) {
         console.log(err);

@@ -15,7 +15,24 @@
 <body>
     <div class="txt-container">
         <h1>Account Created Successfully</h1>
-        <a href="login" class="btn">Done</a>
+        <button class="btn">Done</button>
+        <!-- <a href="login" class="btn">Done</a> -->
     </div>
 </body>
+<script>
+    document.querySelector(".btn").addEventListener("click",()=>{
+
+    fetch('/check-session', { method: 'GET',credentials: 'same-origin' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.user) {
+                window.location.href = "/dashboard";
+            }
+            else {
+                window.location.href = "/login";
+        }
+        })
+        .catch(error => console.error('Error checking session:', error));
+    })
+</script>
 </html>

@@ -109,7 +109,28 @@
                     </div>
                 </div>
             </div>
-            <div class="users-table" style="display: none; margin-top: 45px;">
+            <button id="addUser">Add User</button>
+            <form action="/register" method="post" id="userform">
+                <div class="addUserForm">
+                <input type="text" name="name" id="username" placeholder="User Name" required>
+                <select name="gender" id="gender" required>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+                <input type="date" name="birthyear" id="dob" required>
+                <input type="email" name="email" id="email" placeholder="Email" required>
+                <select name="role" id="role">
+                    <option value="doctor">Doctor</option>
+                    <option value="patient">Patient</option>
+                </select>
+                <!-- <input type="file" name="image" id="image" accept="image/*"> -->
+                <input type="password" name="password" id="password" placeholder="Enter your password" required>
+
+                <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" id="submitBtn">Add</button>
+            </form>
+            <div class="users-table" style="display: none; margin-top: 10px;">
                 <table>
                     <thead>
                         <tr>
@@ -183,7 +204,6 @@ function fetchAdminStats() {
     fetch('/admin-dashboard-stats', { method: 'GET', credentials: 'same-origin' })
         .then(response => response.json())
         .then(data => {
-            // Update statistics in the DOM
             document.getElementById('total-users').textContent = data.totalUsers || '0';
             document.getElementById('total-patients').textContent = data.totalPatients || '0';
             document.getElementById('total-doctors').textContent = data.totalDoctors || '0';
@@ -198,7 +218,6 @@ function fetchAdminStats() {
         });
 }
 
-// Call the function when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     fetchAdminStats();  // Initial load
     
@@ -526,7 +545,9 @@ function usersDropdown() {
 
 
 document.getElementById("users").addEventListener('click',()=>{
-    document.querySelector(".users-table").style.display = "flex";  
+    document.getElementById("addUser").style.display = "flex";
+    document.querySelector(".users-table").style.display = "flex";
+    document.getElementById("userform").style.display = "none";  
     document.querySelector(".stats-container").style.display="none";
     document.querySelector(".patients-table").style.display="none";
     document.querySelector(".doctors-table").style.display="none";
@@ -538,6 +559,8 @@ document.getElementById("users").addEventListener('click',()=>{
 
 document.getElementById("patients").addEventListener('click',()=>{
     document.querySelector(".patients-table").style.display="flex";
+    document.getElementById("addUser").style.display = "none";
+    document.getElementById("userform").style.display = "none";
     document.querySelector(".users-table").style.display = "none";  
     document.querySelector(".stats-container").style.display="none";
     document.querySelector(".doctors-table").style.display="none";
@@ -549,6 +572,8 @@ document.getElementById("patients").addEventListener('click',()=>{
 
 document.getElementById("doctors").addEventListener('click',()=>{
     document.querySelector(".doctors-table").style.display="flex";
+    document.getElementById("addUser").style.display = "none";
+    document.getElementById("userform").style.display = "none";
     document.querySelector(".patients-table").style.display="none";
     document.querySelector(".users-table").style.display = "none";  
     document.querySelector(".stats-container").style.display="none";
@@ -560,6 +585,8 @@ document.getElementById("doctors").addEventListener('click',()=>{
 
 document.getElementById("doctorsToday").addEventListener('click',()=>{
     document.querySelector(".doctorsToday-table").style.display="flex";
+    document.getElementById("addUser").style.display = "none";
+    document.getElementById("userform").style.display = "none";
     document.querySelector(".doctors-table").style.display="none";
     document.querySelector(".patients-table").style.display="none";
     document.querySelector(".users-table").style.display = "none";  
@@ -571,6 +598,8 @@ document.getElementById("doctorsToday").addEventListener('click',()=>{
 
 document.getElementById("appointmentsToday").addEventListener('click',()=>{
     document.querySelector(".apToday-table").style.display="flex";
+    document.getElementById("addUser").style.display = "none";
+    document.getElementById("userform").style.display = "none";
     document.querySelector(".doctorsToday-table").style.display="none";
     document.querySelector(".doctors-table").style.display="none";
     document.querySelector(".patients-table").style.display="none";
@@ -582,6 +611,8 @@ document.getElementById("appointmentsToday").addEventListener('click',()=>{
 
 document.getElementById("schedules").addEventListener('click',()=>{
     document.querySelector(".schedules-table").style.display="flex";
+    document.getElementById("addUser").style.display = "none";
+    document.getElementById("userform").style.display = "none";
     document.querySelector(".apToday-table").style.display="none";
     document.querySelector(".doctorsToday-table").style.display="none";
     document.querySelector(".doctors-table").style.display="none";
@@ -593,6 +624,8 @@ document.getElementById("schedules").addEventListener('click',()=>{
 
 document.getElementById("history").addEventListener('click',()=>{
     document.querySelector(".history-table").style.display="flex"; 
+    document.getElementById("addUser").style.display = "none";
+    document.getElementById("userform").style.display = "none";
     document.querySelector(".apToday-table").style.display="none";
     document.querySelector(".doctorsToday-table").style.display="none";
     document.querySelector(".doctors-table").style.display="none";
@@ -604,6 +637,8 @@ document.getElementById("history").addEventListener('click',()=>{
 
 document.getElementById("stats").addEventListener('click',()=>{
     document.querySelector(".stats-container").style.display="grid";
+    document.getElementById("addUser").style.display = "none";
+    document.getElementById("userform").style.display = "none";
     document.querySelector(".history-table").style.display="none"; 
     document.querySelector(".apToday-table").style.display="none";
     document.querySelector(".doctorsToday-table").style.display="none";
@@ -611,6 +646,10 @@ document.getElementById("stats").addEventListener('click',()=>{
     document.querySelector(".patients-table").style.display="none";
     document.querySelector(".users-table").style.display = "none";  
     document.querySelector(".schedules-table").style.display="none";
+})
+
+document.getElementById("addUser").addEventListener('click',()=>{
+    document.getElementById("userform").style.display = "grid";
 })
 
 

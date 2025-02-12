@@ -838,6 +838,54 @@ th {
     padding: 5px;
 }
 
+#addUser{
+    display: none;
+    background-color: #459bf7;
+    width: 7vw;
+    justify-content: center;
+}
+
+#addUser:hover{
+    background-color: #87baf0;
+    cursor: pointer;
+}
+
+#addUser:active{
+    background-color: #1380f4;
+    cursor: pointer;
+}
+
+
+#email{
+    width: 300px;
+}
+
+.addUserForm{
+    display: grid;
+    grid-template-columns: 300px 300px 300px;
+    gap: 30px;
+    margin-left: 50px;
+}
+
+#submitBtn{
+    width: 50px;
+    margin-left: 50px;
+    margin-top: 15px;
+    background-color: #54f324;
+}
+#submitBtn:hover{
+    background-color: #8af36a;
+    cursor: pointer;
+}
+
+#submitBtn:active{
+    background-color: #49f116;
+}
+
+#userform{
+    display: none;
+}
+
 .dash-header {
     background-color: #abff03;
     padding: 8px;
